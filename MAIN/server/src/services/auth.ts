@@ -12,7 +12,7 @@ interface JwtPayload {
   email: string;
 }
 
-interface GraphQLContext extends BaseContext {
+export interface GraphQLContext extends BaseContext {
   user?: JwtPayload;
   req?: Request;
 }
