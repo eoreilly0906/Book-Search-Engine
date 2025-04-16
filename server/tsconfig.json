@@ -11,8 +11,7 @@
     "rootDir": "./src",
     "allowJs": true,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "types": ["node", "bcrypt", "jsonwebtoken", "dotenv"]
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
