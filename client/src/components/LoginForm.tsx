@@ -1,24 +1,34 @@
 // see SignupForm.js for comments
 import { useState } from 'react';
-import type { ChangeEvent, FormEvent } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
 import { loginUser } from '../utils/API';
 import Auth from '../utils/auth';
 import type { User } from '../models/User';
 
-// biome-ignore lint/correctness/noEmptyPattern: <explanation>
-const LoginForm = ({}: { handleModalClose: () => void }) => {
-  const [userFormData, setUserFormData] = useState<User>({ username: '', email: '', password: '', savedBooks: [] });
+interface LoginFormProps {
+  handleModalClose: () => void;
+}
+
+const LoginForm = ({ handleModalClose }: LoginFormProps) => {
+  // set initial form state
+  const [userFormData, setUserFormData] = useState<User>({
+    username: '',
+    email: '',
+    password: '',
+    savedBooks: [],
+  });
+  // set state for form validation
   const [validated] = useState(false);
+  // set state for alert
   const [showAlert, setShowAlert] = useState(false);
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
   };
 
-  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     // check if form has everything (as per react-bootstrap docs)
@@ -31,12 +41,12 @@ const LoginForm = ({}: { handleModalClose: () => void }) => {
     try {
       const response = await loginUser(userFormData);
 
-      if (!response.ok) {
+      if (!response.token) {
         throw new Error('something went wrong!');
       }
 
-      const { token } = await response.json();
-      Auth.login(token);
+      Auth.login(response.token);
+      handleModalClose();
     } catch (err) {
       console.error(err);
       setShowAlert(true);
@@ -56,27 +66,27 @@ const LoginForm = ({}: { handleModalClose: () => void }) => {
         <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert} variant='danger'>
           Something went wrong with your login credentials!
         </Alert>
-        <Form.Group className='mb-3'>
+        <Form.Group>
           <Form.Label htmlFor='email'>Email</Form.Label>
           <Form.Control
             type='text'
-            placeholder='Your email'
+            placeholder='Your email is required'
             name='email'
             onChange={handleInputChange}
-            value={userFormData.email || ''}
+            value={userFormData.email}
             required
           />
           <Form.Control.Feedback type='invalid'>Email is required!</Form.Control.Feedback>
         </Form.Group>
 
-        <Form.Group className='mb-3'>
+        <Form.Group>
           <Form.Label htmlFor='password'>Password</Form.Label>
           <Form.Control
             type='password'
-            placeholder='Your password'
+            placeholder='Your password is required'
             name='password'
             onChange={handleInputChange}
-            value={userFormData.password || ''}
+            value={userFormData.password}
             required
           />
           <Form.Control.Feedback type='invalid'>Password is required!</Form.Control.Feedback>
