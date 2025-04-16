@@ -4,8 +4,11 @@
   "description": "",
   "main": "dist/server.js",
   "type": "module",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
-    "build": "tsc",
+    "build": "npm install --save-dev @types/bcrypt @types/jsonwebtoken @types/dotenv && tsc",
     "start": "node dist/server.js",
     "watch": "nodemon dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
