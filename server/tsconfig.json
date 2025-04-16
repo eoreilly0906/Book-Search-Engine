@@ -10,7 +10,9 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "allowJs": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "types": ["node", "bcrypt", "jsonwebtoken", "dotenv"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
