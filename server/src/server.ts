@@ -9,6 +9,7 @@ import { authenticateGraphQL, type GraphQLContext } from './services/auth.js';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Apply middleware before routes
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -16,24 +17,37 @@ app.use(express.json());
 const server = new ApolloServer<GraphQLContext>({
   typeDefs,
   resolvers,
+  formatError: (error) => {
+    // Log the error for debugging
+    console.error('GraphQL Error:', error);
+    return error;
+  },
 });
 
 // Start Apollo Server
 await server.start();
 
-// Apply Apollo middleware
-app.use('/graphql', expressMiddleware(server, {
-  context: async ({ req }) => {
-    const context: GraphQLContext = { req };
-    return authenticateGraphQL(context);
-  }
-}));
+// Create context function with explicit typing
+const createContext = async (contextParams: { req: express.Request }): Promise<GraphQLContext> => {
+  const context: GraphQLContext = { request: contextParams.req };
+  return authenticateGraphQL(context);
+};
+
+// Apply Apollo middleware with CORS enabled
+app.use('/graphql', expressMiddleware(server, { context: createContext }));
 
 // if we're in production, serve client/build as static assets
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build')));
+  app.use(express.static(path.join(__dirname, '../../client/dist')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+  });
 }
 
 db.once('open', () => {
-  app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
+  app.listen(PORT, () => {
+    console.log(`🌍 Now listening on localhost:${PORT}`);
+    console.log(`🚀 GraphQL ready at http://localhost:${PORT}/graphql`);
+  });
 });

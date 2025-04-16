@@ -14,7 +14,7 @@ interface JwtPayload {
 
 export interface GraphQLContext extends BaseContext {
   user?: JwtPayload;
-  req?: Request;
+  request?: Request;
 }
 
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
@@ -39,15 +39,11 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 };
 
 export const authenticateGraphQL = async (context: GraphQLContext) => {
-  const authHeader = context.req?.headers.authorization;
+  const authHeader = context.request?.headers.authorization;
 
   if (!authHeader) {
-    throw new GraphQLError('Not authenticated', {
-      extensions: {
-        code: 'UNAUTHENTICATED',
-        http: { status: 401 },
-      },
-    });
+    // Return context without authentication for non-protected routes
+    return context;
   }
 
   const token = authHeader.split(' ')[1];
