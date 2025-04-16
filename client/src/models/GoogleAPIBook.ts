@@ -1,14 +1,17 @@
-export interface GoogleAPIVolumeInfo {
-  title: string;
+export interface GoogleAPIBook {
+  bookId: string;
   authors: string[];
   description: string;
-  imageLinks?: {
-    thumbnail: string;
+  title: string;
+  image: string;
+  link: string;
+  volumeInfo: {
+    authors?: string[];
+    description?: string;
+    title: string;
+    imageLinks?: {
+      thumbnail?: string;
+    };
+    infoLink?: string;
   };
-  infoLink?: string;
-}
-
-export interface GoogleAPIBook {
-    id: string;
-    volumeInfo: GoogleAPIVolumeInfo;
 }

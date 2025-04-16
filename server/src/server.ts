@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
 
-// Apply middleware before routes
+// Apply middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -31,13 +31,13 @@ const server = new ApolloServer<GraphQLContext>({
 // Start Apollo Server
 await server.start();
 
-// Create context function with explicit typing
+// Create context function
 const createContext = async (contextParams: { req: express.Request }): Promise<GraphQLContext> => {
   const context: GraphQLContext = { request: contextParams.req };
   return authenticateGraphQL(context);
 };
 
-// Apply Apollo middleware with CORS enabled
+// Apply Apollo middleware
 app.use('/graphql', expressMiddleware(server, { context: createContext }));
 
 // if we're in production, serve client/build as static assets
@@ -49,6 +49,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+// Start server
 db.once('open', () => {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`🌍 Now listening on port ${PORT}`);
