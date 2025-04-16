@@ -1,26 +1,21 @@
 import { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
+import { useMutation } from '@apollo/client';
+import { ADD_USER } from '../graphql/mutations';
 
-import { createUser } from '../utils/API';
 import Auth from '../utils/auth';
-import type { User } from '../models/User';
 
 interface SignupFormProps {
   handleModalClose: () => void;
 }
 
-const SignUpForm = ({ handleModalClose }: SignupFormProps) => {
-  // set initial form state
-  const [userFormData, setUserFormData] = useState<User>({
-    username: '',
-    email: '',
-    password: '',
-    savedBooks: [],
-  });
-  // set state for form validation
-  const [validated] = useState(false);
+const SignupForm = ({ handleModalClose }: SignupFormProps) => {
+  // set initial state
+  const [userFormData, setUserFormData] = useState({ username: '', email: '', password: '' });
   // set state for alert
   const [showAlert, setShowAlert] = useState(false);
+
+  const [addUser, { error }] = useMutation(ADD_USER);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -30,21 +25,16 @@ const SignUpForm = ({ handleModalClose }: SignupFormProps) => {
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // check if form has everything (as per react-bootstrap docs)
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
     try {
-      const response = await createUser(userFormData);
+      const { data } = await addUser({
+        variables: { ...userFormData }
+      });
 
-      if (!response.token) {
+      if (!data?.addUser?.token) {
         throw new Error('something went wrong!');
       }
 
-      Auth.login(response.token);
+      Auth.login(data.addUser.token);
       handleModalClose();
     } catch (err) {
       console.error(err);
@@ -55,24 +45,26 @@ const SignUpForm = ({ handleModalClose }: SignupFormProps) => {
       username: '',
       email: '',
       password: '',
-      savedBooks: [],
     });
   };
 
   return (
     <>
-      {/* This is needed for the CreateForm validation */}
-      <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
-        {/* show alert if server response is bad */}
-        <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert} variant='danger'>
-          Something went wrong with your signup!
+      <Form noValidate onSubmit={handleFormSubmit}>
+        <Alert 
+          dismissible 
+          onClose={() => setShowAlert(false)} 
+          show={showAlert} 
+          variant='danger'
+        >
+          {error ? error.message : 'Something went wrong with your signup!'}
         </Alert>
 
         <Form.Group>
           <Form.Label htmlFor='username'>Username</Form.Label>
           <Form.Control
             type='text'
-            placeholder='Your username is required'
+            placeholder='Your username'
             name='username'
             onChange={handleInputChange}
             value={userFormData.username}
@@ -85,7 +77,7 @@ const SignUpForm = ({ handleModalClose }: SignupFormProps) => {
           <Form.Label htmlFor='email'>Email</Form.Label>
           <Form.Control
             type='email'
-            placeholder='Your email is required'
+            placeholder='Your email address'
             name='email'
             onChange={handleInputChange}
             value={userFormData.email}
@@ -98,7 +90,7 @@ const SignUpForm = ({ handleModalClose }: SignupFormProps) => {
           <Form.Label htmlFor='password'>Password</Form.Label>
           <Form.Control
             type='password'
-            placeholder='Your password is required'
+            placeholder='Your password'
             name='password'
             onChange={handleInputChange}
             value={userFormData.password}
@@ -117,4 +109,4 @@ const SignUpForm = ({ handleModalClose }: SignupFormProps) => {
   );
 };
 
-export default SignUpForm;
+export default SignupForm;

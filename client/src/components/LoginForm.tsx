@@ -1,10 +1,10 @@
 // see SignupForm.js for comments
 import { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
+import { useMutation } from '@apollo/client';
+import { LOGIN_USER } from '../graphql/mutations';
 
-import { loginUser } from '../utils/API';
 import Auth from '../utils/auth';
-import type { User } from '../models/User';
 
 interface LoginFormProps {
   handleModalClose: () => void;
@@ -12,16 +12,11 @@ interface LoginFormProps {
 
 const LoginForm = ({ handleModalClose }: LoginFormProps) => {
   // set initial form state
-  const [userFormData, setUserFormData] = useState<User>({
-    username: '',
-    email: '',
-    password: '',
-    savedBooks: [],
-  });
-  // set state for form validation
-  const [validated] = useState(false);
+  const [userFormData, setUserFormData] = useState({ email: '', password: '' });
   // set state for alert
   const [showAlert, setShowAlert] = useState(false);
+
+  const [loginUser, { error }] = useMutation(LOGIN_USER);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -31,21 +26,16 @@ const LoginForm = ({ handleModalClose }: LoginFormProps) => {
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // check if form has everything (as per react-bootstrap docs)
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
     try {
-      const response = await loginUser(userFormData);
+      const { data } = await loginUser({
+        variables: { ...userFormData }
+      });
 
-      if (!response.token) {
+      if (!data?.login?.token) {
         throw new Error('something went wrong!');
       }
 
-      Auth.login(response.token);
+      Auth.login(data.login.token);
       handleModalClose();
     } catch (err) {
       console.error(err);
@@ -53,24 +43,27 @@ const LoginForm = ({ handleModalClose }: LoginFormProps) => {
     }
 
     setUserFormData({
-      username: '',
       email: '',
       password: '',
-      savedBooks: [],
     });
   };
 
   return (
     <>
-      <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
-        <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert} variant='danger'>
-          Something went wrong with your login credentials!
+      <Form noValidate onSubmit={handleFormSubmit}>
+        <Alert 
+          dismissible 
+          onClose={() => setShowAlert(false)} 
+          show={showAlert} 
+          variant='danger'
+        >
+          {error ? error.message : 'Something went wrong with your login credentials!'}
         </Alert>
         <Form.Group>
           <Form.Label htmlFor='email'>Email</Form.Label>
           <Form.Control
-            type='text'
-            placeholder='Your email is required'
+            type='email'
+            placeholder='Your email address'
             name='email'
             onChange={handleInputChange}
             value={userFormData.email}
@@ -83,7 +76,7 @@ const LoginForm = ({ handleModalClose }: LoginFormProps) => {
           <Form.Label htmlFor='password'>Password</Form.Label>
           <Form.Control
             type='password'
-            placeholder='Your password is required'
+            placeholder='Your password'
             name='password'
             onChange={handleInputChange}
             value={userFormData.password}

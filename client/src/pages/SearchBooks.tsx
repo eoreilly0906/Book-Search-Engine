@@ -26,13 +26,21 @@ const SearchBooks = () => {
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
-  const [saveBook, { error }] = useMutation(SAVE_BOOK);
+  const [saveBook] = useMutation(SAVE_BOOK);
 
   // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
   // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
   useEffect(() => {
     return () => saveBookIds(savedBookIds);
   });
+
+  // Clear search results when user logs out
+  useEffect(() => {
+    if (!Auth.loggedIn()) {
+      setSearchedBooks([]);
+      setSearchInput('');
+    }
+  }, []);
 
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -51,14 +59,17 @@ const SearchBooks = () => {
 
       const { items } = await response.json();
 
-      const bookData = items.map((book: GoogleAPIBook) => ({
-        bookId: book.id,
-        authors: book.volumeInfo.authors || ['No author to display'],
-        title: book.volumeInfo.title,
-        description: book.volumeInfo.description,
-        image: book.volumeInfo.imageLinks?.thumbnail || '',
-        link: book.volumeInfo.infoLink || `https://books.google.com/books?id=${book.id}`,
-      }));
+      const bookData = items.map((book: GoogleAPIBook) => {
+        const volumeInfo = book.volumeInfo;
+        return {
+          bookId: book.id,
+          authors: volumeInfo.authors || ['No author to display'],
+          title: volumeInfo.title,
+          description: volumeInfo.description,
+          image: volumeInfo.imageLinks?.thumbnail || '',
+          link: volumeInfo.infoLink || `https://books.google.com/books?id=${book.id}`,
+        };
+      });
 
       setSearchedBooks(bookData);
       setSearchInput('');
