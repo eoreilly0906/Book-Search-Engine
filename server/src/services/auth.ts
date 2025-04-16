@@ -2,8 +2,8 @@ import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { GraphQLError } from 'graphql';
 import type { BaseContext } from '@apollo/server';
+import * as dotenv from 'dotenv';
 
-import dotenv from 'dotenv';
 dotenv.config();
 
 interface JwtPayload {
@@ -25,7 +25,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 
     const secretKey = process.env.JWT_SECRET_KEY || '';
 
-    jwt.verify(token, secretKey, (err, user) => {
+    jwt.verify(token, secretKey, (err: jwt.VerifyErrors | null, user: any) => {
       if (err) {
         return res.sendStatus(403); // Forbidden
       }
@@ -51,21 +51,15 @@ export const authenticateGraphQL = async (context: GraphQLContext) => {
 
   try {
     const user = jwt.verify(token, secretKey) as JwtPayload;
-    context.user = user;
-    return context;
-  } catch (err) {
+    return { ...context, user };
+  } catch (error) {
     throw new GraphQLError('Invalid token', {
-      extensions: {
-        code: 'FORBIDDEN',
-        http: { status: 403 },
-      },
+      extensions: { code: 'UNAUTHENTICATED' },
     });
   }
 };
 
 export const signToken = (username: string, email: string, _id: unknown) => {
-  const payload = { username, email, _id };
   const secretKey = process.env.JWT_SECRET_KEY || '';
-
-  return jwt.sign(payload, secretKey, { expiresIn: '1h' });
+  return jwt.sign({ username, email, _id }, secretKey, { expiresIn: '2h' });
 };
