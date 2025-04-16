@@ -1,4 +1,7 @@
 #!/bin/bash
+# Exit on error
+set -e
+
 # Ensure we're in the server directory
 cd "$(dirname "$0")"
 
@@ -6,18 +9,19 @@ cd "$(dirname "$0")"
 echo "Installing server dependencies..."
 npm install
 
+# Install TypeScript globally if not already installed
+echo "Installing TypeScript..."
+npm install -g typescript
+
 # Install type definitions
 echo "Installing type definitions..."
 npm install --save-dev @types/bcrypt @types/jsonwebtoken @types/dotenv
 
 # Build the server
 echo "Building server..."
-npx tsc
+if ! ./node_modules/.bin/tsc; then
+    echo "Server build failed"
+    exit 1
+fi
 
-# Check if build was successful
-if [ $? -eq 0 ]; then
-  echo "Server build successful!"
-else
-  echo "Server build failed!"
-  exit 1
-fi 
+echo "Server build completed successfully" 

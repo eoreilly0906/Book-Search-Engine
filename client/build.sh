@@ -8,7 +8,7 @@ npm install
 
 # Build the client
 echo "Building client..."
-npx vite build
+./node_modules/.bin/vite build
 
 # Check if build was successful
 if [ $? -eq 0 ]; then
