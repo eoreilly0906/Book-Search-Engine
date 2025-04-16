@@ -8,9 +8,11 @@ import {
   Card,
   Row
 } from 'react-bootstrap';
+import { useMutation } from '@apollo/client';
+import { SAVE_BOOK } from '../graphql/mutations';
 
 import Auth from '../utils/auth';
-import { saveBook, searchGoogleBooks } from '../utils/API';
+import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 import type { Book } from '../models/Book';
 import type { GoogleAPIBook } from '../models/GoogleAPIBook';
@@ -23,6 +25,8 @@ const SearchBooks = () => {
 
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
+
+  const [saveBook, { error }] = useMutation(SAVE_BOOK);
 
   // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
   // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
@@ -53,6 +57,7 @@ const SearchBooks = () => {
         title: book.volumeInfo.title,
         description: book.volumeInfo.description,
         image: book.volumeInfo.imageLinks?.thumbnail || '',
+        link: book.volumeInfo.infoLink || `https://books.google.com/books?id=${book.id}`,
       }));
 
       setSearchedBooks(bookData);
@@ -67,19 +72,10 @@ const SearchBooks = () => {
     // find the book in `searchedBooks` state by the matching id
     const bookToSave: Book = searchedBooks.find((book) => book.bookId === bookId)!;
 
-    // get token
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-    if (!token) {
-      return false;
-    }
-
     try {
-      const response = await saveBook(bookToSave, token);
-
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+      await saveBook({
+        variables: { bookData: { ...bookToSave } }
+      });
 
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
@@ -133,6 +129,11 @@ const SearchBooks = () => {
                     <Card.Title>{book.title}</Card.Title>
                     <p className='small'>Authors: {book.authors}</p>
                     <Card.Text>{book.description}</Card.Text>
+                    <a href={book.link} target="_blank" rel="noopener noreferrer">
+                      <Button variant='outline-dark' className='mb-2'>
+                        View on Google Books
+                      </Button>
+                    </a>
                     {Auth.loggedIn() && (
                       <Button
                         disabled={savedBookIds?.some((savedBookId: string) => savedBookId === book.bookId)}
