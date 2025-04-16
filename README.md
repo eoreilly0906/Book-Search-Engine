@@ -35,6 +35,8 @@ https://mongoosejs.com/docs/models.html#deleting
 
 https://mongoosejs.com/docs/models.html#updating
 
+https://coding-boot-camp.github.io/full-stack/mongodb/deploy-with-render-and-mongodb-atlas
+
 ## Screenshots of app
 
 ### Screenshots
