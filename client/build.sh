@@ -1,4 +1,7 @@
 #!/bin/bash
+# Exit on error
+set -e
+
 # Ensure we're in the client directory
 cd "$(dirname "$0")"
 
@@ -6,14 +9,15 @@ cd "$(dirname "$0")"
 echo "Installing client dependencies..."
 npm install
 
+# Ensure @vitejs/plugin-react is installed
+echo "Ensuring Vite React plugin is installed..."
+npm install --save-dev @vitejs/plugin-react
+
 # Build the client
 echo "Building client..."
-./node_modules/.bin/vite build
+if ! ./node_modules/.bin/vite build; then
+    echo "Client build failed"
+    exit 1
+fi
 
-# Check if build was successful
-if [ $? -eq 0 ]; then
-  echo "Client build successful!"
-else
-  echo "Client build failed!"
-  exit 1
-fi 
+echo "Client build completed successfully" 
