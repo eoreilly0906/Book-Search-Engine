@@ -26,13 +26,7 @@ const SavedBooks = () => {
           return false;
         }
 
-        const response = await getMe(token);
-
-        if (!response.ok) {
-          throw new Error('something went wrong!');
-        }
-
-        const user = await response.json();
+        const user = await getMe(token);
         setUserData(user);
       } catch (err) {
         console.error(err);
@@ -51,13 +45,7 @@ const SavedBooks = () => {
     }
 
     try {
-      const response = await deleteBook(bookId, token);
-
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
-
-      const updatedUser = await response.json();
+      const updatedUser = await deleteBook(bookId, token);
       setUserData(updatedUser);
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
@@ -93,8 +81,8 @@ const SavedBooks = () => {
         <Row>
           {userData.savedBooks.map((book) => {
             return (
-              <Col md='4'>
-                <Card key={book.bookId} border='dark'>
+              <Col md='4' key={book.bookId}>
+                <Card border='dark'>
                   {book.image ? (
                     <Card.Img
                       src={book.image}
@@ -106,6 +94,13 @@ const SavedBooks = () => {
                     <Card.Title>{book.title}</Card.Title>
                     <p className='small'>Authors: {book.authors}</p>
                     <Card.Text>{book.description}</Card.Text>
+                    {book.link && (
+                      <a href={book.link} target="_blank" rel="noopener noreferrer">
+                        <Button variant='outline-dark' className='mb-2'>
+                          View on Google Books
+                        </Button>
+                      </a>
+                    )}
                     <Button
                       className='btn-block btn-danger'
                       onClick={() => handleDeleteBook(book.bookId)}
