@@ -46,20 +46,20 @@ export const authenticateGraphQL = async (context: GraphQLContext) => {
     return context;
   }
 
-  const token = authHeader.split(' ')[1];
-  const secretKey = process.env.JWT_SECRET_KEY || '';
-
   try {
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return context;
+    }
+
+    const secretKey = process.env.JWT_SECRET_KEY || '';
     const user = jwt.verify(token, secretKey) as JwtPayload;
     context.user = user;
     return context;
   } catch (err) {
-    throw new GraphQLError('Invalid token', {
-      extensions: {
-        code: 'FORBIDDEN',
-        http: { status: 403 },
-      },
-    });
+    console.error('Token verification error:', err);
+    // Instead of throwing an error, return the context without user
+    return context;
   }
 };
 

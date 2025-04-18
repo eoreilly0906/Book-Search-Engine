@@ -2,7 +2,9 @@
 import { jwtDecode } from 'jwt-decode';
 
 interface UserToken {
-  name: string;
+  username: string;
+  email: string;
+  _id: string;
   exp: number;
 }
 
@@ -17,7 +19,7 @@ class AuthService {
   loggedIn() {
     // Checks if there is a saved token and it's still valid
     const token = this.getToken();
-    return !!token && !this.isTokenExpired(token); // handwaiving here
+    return !!token && !this.isTokenExpired(token);
   }
 
   // check if token is expired
@@ -39,9 +41,14 @@ class AuthService {
     return localStorage.getItem('id_token');
   }
 
-  login(idToken: string) {
+  setToken(idToken: string) {
     // Saves user token to localStorage
     localStorage.setItem('id_token', idToken);
+  }
+
+  login(idToken: string) {
+    // Saves user token to localStorage
+    this.setToken(idToken);
     window.location.assign('/');
   }
 
