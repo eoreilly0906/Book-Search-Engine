@@ -5,9 +5,9 @@ Book Search Engine
 Using NoSQL databases with MongoDB/Mongoose. Typscript, Javascript, VS Code 
 and Insomnia to test APIs.
 
-## Link to DEMO
+## Link to Render Deploy
 
-
+https://book-search-engine-m4ue.onrender.com
 
 ## About the project
 
@@ -15,7 +15,7 @@ This project uses a NoSQL database to bring a social media platform to life.
 
 **Github:** 
 
-
+https://github.com/eoreilly0906/Book-Search-Engine
 
 ## Notes on code
 
