@@ -16,12 +16,28 @@ if (!MONGODB_URI) {
   process.exit(1);
 }
 
+console.log('Attempting to connect to MongoDB with URI:', MONGODB_URI.replace(/:[^:@]+@/, ':****@')); // Hide password in logs
+
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(MONGODB_URI);
+    const conn = await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+    });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
+  } catch (error: any) {
+    console.error('MongoDB connection error details:', {
+      name: error?.name,
+      message: error?.message,
+      code: error?.code,
+      codeName: error?.codeName,
+    });
+    if (error?.name === 'MongooseServerSelectionError') {
+      console.error('Could not connect to MongoDB Atlas. Please check:');
+      console.error('1. Your IP address is whitelisted in MongoDB Atlas');
+      console.error('2. Your username and password are correct');
+      console.error('3. The cluster is running and accessible');
+    }
     process.exit(1);
   }
 };
