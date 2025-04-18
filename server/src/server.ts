@@ -76,6 +76,6 @@ db.once('open', () => {
     console.log(`🌍 Now listening on port ${PORT}`);
     console.log(`🚀 GraphQL endpoint: http://localhost:${PORT}/graphql`);
     console.log(`🔑 JWT Secret Key: ${process.env.JWT_SECRET ? 'Set' : 'Not set'}`);
-    console.log(`📦 MongoDB URI: ${process.env.MONGODB_URI ? 'Set' : 'Not set'}`);
+    console.log(`📦 MongoDB URI: ${process.env.MONGO_URI ? 'Set' : 'Not set'}`);
   });
 });
