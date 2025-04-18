@@ -40,14 +40,14 @@ https://coding-boot-camp.github.io/full-stack/mongodb/deploy-with-render-and-mon
 ## Screenshots of app
 
 ### HOME Page
-<img src="/Users/edwardoreilly/Desktop/bootcamp/Book-Search-Engine/Book-Search-Engine/assets/HOME.PNG" />
+<img src="assets/HOME.PNG" />
 
 ### SEARCH Page
-<img src="/Users/edwardoreilly/Desktop/bootcamp/Book-Search-Engine/Book-Search-Engine/assets/SEARCH.PNG" />
+<img src="assets/SEARCH.PNG" />
 
 ### SAVING demo
-<img src="/Users/edwardoreilly/Desktop/bootcamp/Book-Search-Engine/Book-Search-Engine/assets/SAVE.PNG" />
+<img src="assets/SAVE.PNG" />
 
 ### SAVED Page
-<img src="/Users/edwardoreilly/Desktop/bootcamp/Book-Search-Engine/Book-Search-Engine/assets/SAVED.PNG" />
+<img src="assets/SAVED.PNG" />
 
