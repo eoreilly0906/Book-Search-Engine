@@ -1,53 +1,136 @@
 # Book Search Engine
-Book Search Engine 
 
-## How It's Made:
-Using NoSQL databases with MongoDB/Mongoose. Typscript, Javascript, VS Code 
-and Insomnia to test APIs.
+A MERN stack application that allows users to search for books using the Google Books API and save their favorite books to their profile.
 
-## Link to Render Deploy
+## Features
 
-https://book-search-engine-m4ue.onrender.com
+- User authentication (signup/login)
+- Search for books using the Google Books API
+- Save books to your profile
+- View your saved books
+- Remove books from your saved collection
+- Responsive design for desktop and mobile
 
-## About the project
+## Technologies Used
 
-This project uses a NoSQL database to bring a social media platform to life.
+- **Frontend:**
+  - React with TypeScript
+  - Apollo Client for GraphQL
+  - Bootstrap for styling
+  - React Router for navigation
 
-**Github:** 
+- **Backend:**
+  - Node.js with Express
+  - GraphQL API
+  - MongoDB with Mongoose
+  - JWT Authentication
 
-https://github.com/eoreilly0906/Book-Search-Engine
+- **APIs:**
+  - Google Books API
+  - GraphQL API
 
-## Notes on code
+## Live Demo
 
-https://www.Google.com
+Visit the deployed application at: https://book-search-engine-m4ue.onrender.com
 
-https://www.npmjs.com/package/express
+## Local Development Setup
 
-https://www.npmjs.com/package/mongoose
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/eoreilly0906/Book-Search-Engine.git
+   cd Book-Search-Engine
+   ```
 
-https://stackoverflow.com/questions/tagged/mongoose
+2. Install dependencies:
+   ```bash
+   # Install server dependencies
+   cd server
+   npm install
 
-https://mongoosejs.com/docs/models.html
+   # Install client dependencies
+   cd ../client
+   npm install
+   ```
 
-https://mongoosejs.com/docs/models.html#querying
+3. Set up environment variables:
+   Create a `.env` file in the server directory with:
+   ```
+   MONGODB_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   ```
 
-https://mongoosejs.com/docs/models.html#deleting
+4. Start the development servers:
+   ```bash
+   # Start the server (from server directory)
+   npm run dev
 
-https://mongoosejs.com/docs/models.html#updating
+   # Start the client (from client directory)
+   npm run dev
+   ```
 
-https://coding-boot-camp.github.io/full-stack/mongodb/deploy-with-render-and-mongodb-atlas
+## Project Structure
 
-## Screenshots of app
+```
+Book-Search-Engine/
+├── client/                 # React frontend
+│   ├── src/
+│   │   ├── components/    # Reusable components
+│   │   ├── pages/        # Page components
+│   │   ├── utils/        # Utility functions
+│   │   └── App.tsx       # Main App component
+│   └── package.json
+├── server/                # Node.js backend
+│   ├── src/
+│   │   ├── config/       # Database configuration
+│   │   ├── models/       # Mongoose models
+│   │   ├── schemas/      # GraphQL schemas
+│   │   └── server.ts     # Express server setup
+│   └── package.json
+└── README.md
+```
 
-### HOME Page
-<img src="assets/HOME.PNG" />
+## API Documentation
 
-### SEARCH Page
-<img src="assets/SEARCH.PNG" />
+### GraphQL Queries
 
-### SAVING demo
-<img src="assets/SAVE.PNG" />
+- `me`: Get current user's profile and saved books
+- `users`: Get all users (admin only)
 
-### SAVED Page
-<img src="assets/SAVED.PNG" />
+### GraphQL Mutations
+
+- `addUser`: Create a new user account
+- `login`: Authenticate user
+- `saveBook`: Save a book to user's profile
+- `removeBook`: Remove a book from user's profile
+
+## Screenshots
+
+### Home Page
+<img src="assets/HOME.PNG" alt="Home Page" />
+
+### Search Page
+<img src="assets/SEARCH.PNG" alt="Search Page" />
+
+### Saving Books
+<img src="assets/SAVE.PNG" alt="Saving Books" />
+
+### Saved Books Page
+<img src="assets/SAVED.PNG" alt="Saved Books Page" />
+
+## Resources
+
+- [Google Books API Documentation](https://developers.google.com/books/docs/v1/using)
+- [Apollo Client Documentation](https://www.apollographql.com/docs/react/)
+- [Mongoose Documentation](https://mongoosejs.com/docs/)
+- [Express Documentation](https://expressjs.com/)
+- [React Documentation](https://reactjs.org/)
+
+## License
+
+This project is licensed under the MIT License.
+
+## Author
+
+Edward O'Reilly
+- GitHub: [eoreilly0906](https://github.com/eoreilly0906)
 
