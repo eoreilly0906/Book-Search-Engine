@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { GraphQLError } from 'graphql';
 import type { BaseContext } from '@apollo/server';
 
 import dotenv from 'dotenv';
