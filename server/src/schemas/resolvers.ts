@@ -21,19 +21,25 @@ const resolvers = {
     },
 
     login: async (_parent: any, { email, password }: { email: string; password: string }) => {
+      console.log('Login attempt for email:', email);
       const user = await User.findOne({ email });
+      console.log('User found:', user ? 'Yes' : 'No');
 
       if (!user) {
+        console.log('No user found with email:', email);
         throw new Error("Can't find this user");
       }
 
       const correctPw = await user.isCorrectPassword(password);
+      console.log('Password correct:', correctPw ? 'Yes' : 'No');
 
       if (!correctPw) {
+        console.log('Incorrect password for user:', email);
         throw new Error('Wrong password!');
       }
 
       const token = signToken(user.username, user.email, user._id);
+      console.log('Login successful for user:', email);
       return { token, user };
     },
 
